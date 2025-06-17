@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monthly Money Tracker</title>
+    <title>Monthly Money Tracker - India</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #4361ee;
-            --secondary: #3f37c9;
-            --success: #4cc9f0;
-            --danger: #f72585;
-            --warning: #f8961e;
-            --dark: #212529;
-            --light: #f8f9fa;
-            --gray: #6c757d;
-            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --saffron: #FF9933;
+            --white: #FFFFFF;
+            --green: #138808;
+            --navy: #000080;
+            --light-blue: #E3F2FD;
+            --dark-blue: #0d47a1;
+            --gray: #616161;
+            --light-gray: #f5f5f5;
+            --card-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s ease;
         }
         
@@ -23,12 +24,12 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
         }
         
         body {
-            background-color: #f0f2f5;
-            color: var(--dark);
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7f1 100%);
+            color: #333;
             line-height: 1.6;
             padding: 20px;
             min-height: 100vh;
@@ -42,21 +43,42 @@
         header {
             text-align: center;
             margin-bottom: 30px;
-            padding: 20px 0;
+            padding: 25px 0;
+            background: linear-gradient(to right, var(--navy), var(--dark-blue));
+            border-radius: 16px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 20%);
         }
         
         h1 {
-            font-size: 2.5rem;
-            color: var(--primary);
+            font-size: 2.8rem;
             margin-bottom: 10px;
             font-weight: 700;
+            position: relative;
+            z-index: 2;
         }
         
         .subtitle {
             font-size: 1.1rem;
-            color: var(--gray);
             max-width: 600px;
             margin: 0 auto;
+            position: relative;
+            z-index: 2;
+            opacity: 0.9;
         }
         
         .dashboard {
@@ -78,11 +100,34 @@
             padding: 25px;
             box-shadow: var(--card-shadow);
             transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+        }
+        
+        .card.income::after {
+            background: linear-gradient(to right, var(--green), #4CAF50);
+        }
+        
+        .card.expenses::after {
+            background: linear-gradient(to right, #f44336, #e53935);
+        }
+        
+        .card.savings::after {
+            background: linear-gradient(to right, var(--saffron), #FF8F00);
         }
         
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
         }
         
         .card-title {
@@ -98,18 +143,29 @@
             font-size: 2.2rem;
             font-weight: 700;
             margin-bottom: 5px;
+            transition: all 0.5s ease;
+        }
+        
+        .card-value.changed {
+            animation: flash 1s ease;
+        }
+        
+        @keyframes flash {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); color: var(--saffron); }
+            100% { transform: scale(1); }
         }
         
         .income .card-value {
-            color: var(--primary);
+            color: var(--green);
         }
         
         .expenses .card-value {
-            color: var(--danger);
+            color: #f44336;
         }
         
         .savings .card-value {
-            color: var(--success);
+            color: var(--saffron);
         }
         
         .card-change {
@@ -121,11 +177,11 @@
         }
         
         .positive {
-            color: #2ecc71;
+            color: var(--green);
         }
         
         .negative {
-            color: var(--danger);
+            color: #f44336;
         }
         
         .controls {
@@ -133,56 +189,62 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 20px;
             margin-bottom: 30px;
             background: white;
             border-radius: 16px;
-            padding: 20px;
+            padding: 25px;
             box-shadow: var(--card-shadow);
         }
         
         .month-selector {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
+            background: var(--light-blue);
+            padding: 10px 20px;
+            border-radius: 12px;
         }
         
         .month-btn {
-            background: var(--light);
+            background: var(--navy);
             border: none;
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            color: var(--dark);
+            color: white;
             transition: var(--transition);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         
         .month-btn:hover {
-            background: var(--primary);
-            color: white;
+            background: var(--dark-blue);
+            transform: scale(1.05);
         }
         
         .current-month {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 600;
-            min-width: 180px;
+            min-width: 200px;
             text-align: center;
+            color: var(--navy);
         }
         
         .transaction-form {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 15px;
-            flex-wrap: wrap;
+            width: 100%;
         }
         
         .input-group {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 8px;
         }
         
         label {
@@ -192,165 +254,158 @@
         }
         
         select, input, button {
-            padding: 12px 15px;
-            border-radius: 10px;
+            padding: 14px 16px;
+            border-radius: 12px;
             border: 1px solid #e0e0e0;
             font-size: 1rem;
             outline: none;
             transition: var(--transition);
+            background: white;
         }
         
         select:focus, input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+            border-color: var(--navy);
+            box-shadow: 0 0 0 3px rgba(13, 71, 161, 0.2);
         }
         
         .add-btn {
-            background: var(--primary);
+            background: linear-gradient(to right, var(--navy), var(--dark-blue));
             color: white;
             border: none;
             font-weight: 600;
             cursor: pointer;
-            padding: 12px 25px;
+            padding: 14px 25px;
             align-self: flex-end;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(13, 71, 161, 0.3);
+            transition: var(--transition);
         }
         
         .add-btn:hover {
-            background: var(--secondary);
+            background: linear-gradient(to right, var(--dark-blue), #0b3d91);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(13, 71, 161, 0.4);
         }
         
         .transactions-container {
             background: white;
             border-radius: 16px;
-            padding: 25px;
+            padding: 30px;
             box-shadow: var(--card-shadow);
+            margin-bottom: 30px;
         }
         
         .section-title {
-            font-size: 1.4rem;
-            margin-bottom: 20px;
+            font-size: 1.6rem;
+            margin-bottom: 25px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            color: var(--navy);
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: var(--saffron);
+            border-radius: 2px;
         }
         
         .transaction-list {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 18px;
         }
         
         .transaction {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 18px 20px;
-            border-radius: 12px;
-            background: var(--light);
+            padding: 20px;
+            border-radius: 14px;
+            background: var(--light-gray);
             transition: var(--transition);
-            border-left: 4px solid transparent;
+            border-left: 5px solid transparent;
         }
         
         .transaction:hover {
-            transform: translateX(5px);
+            transform: translateX(8px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
         }
         
         .transaction.income {
-            border-left-color: var(--primary);
+            border-left-color: var(--green);
         }
         
         .transaction.expense {
-            border-left-color: var(--danger);
+            border-left-color: #f44336;
         }
         
         .transaction-info {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 8px;
         }
         
         .transaction-title {
             font-weight: 600;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
         }
         
         .transaction-date {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: var(--gray);
         }
         
         .transaction-amount {
             font-weight: 700;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
         }
         
         .income .transaction-amount {
-            color: var(--primary);
+            color: var(--green);
         }
         
         .expense .transaction-amount {
-            color: var(--danger);
+            color: #f44336;
         }
         
         .transaction-category {
-            background: rgba(67, 97, 238, 0.1);
-            color: var(--primary);
-            padding: 4px 10px;
+            background: rgba(19, 136, 8, 0.1);
+            color: var(--green);
+            padding: 5px 12px;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 500;
             align-self: flex-start;
             margin-top: 5px;
         }
         
         .expense .transaction-category {
-            background: rgba(247, 37, 133, 0.1);
-            color: var(--danger);
-        }
-        
-        .transaction-actions {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .action-btn {
-            background: none;
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: var(--gray);
-            transition: var(--transition);
-        }
-        
-        .action-btn:hover {
-            background: rgba(0, 0, 0, 0.05);
-            color: var(--dark);
-        }
-        
-        .delete-btn:hover {
-            color: var(--danger);
-            background: rgba(247, 37, 133, 0.1);
+            background: rgba(244, 67, 54, 0.1);
+            color: #f44336;
         }
         
         .empty-state {
             text-align: center;
-            padding: 40px 20px;
+            padding: 50px 20px;
             color: var(--gray);
         }
         
         .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 15px;
+            font-size: 4rem;
+            margin-bottom: 20px;
             color: #e0e0e0;
         }
         
         .empty-state p {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             max-width: 400px;
             margin: 0 auto;
         }
@@ -359,7 +414,7 @@
             text-align: center;
             padding: 30px 0;
             color: var(--gray);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             margin-top: 20px;
         }
         
@@ -368,46 +423,152 @@
             margin-top: 30px;
             display: flex;
             align-items: flex-end;
-            gap: 10px;
+            justify-content: center;
+            gap: 30px;
             padding: 20px 0;
         }
         
         .chart-bar {
-            flex: 1;
-            background: var(--primary);
-            border-radius: 8px 8px 0 0;
+            width: 80px;
+            background: var(--navy);
+            border-radius: 10px 10px 0 0;
             position: relative;
-            min-width: 40px;
             transition: transform 0.5s ease;
             transform-origin: bottom;
         }
         
+        .chart-bar.income {
+            background: linear-gradient(to top, var(--green), #81C784);
+        }
+        
+        .chart-bar.expenses {
+            background: linear-gradient(to top, #f44336, #e57373);
+        }
+        
+        .chart-bar.savings {
+            background: linear-gradient(to top, var(--saffron), #FFD54F);
+        }
+        
         .chart-bar-label {
             position: absolute;
-            bottom: -25px;
+            bottom: -35px;
             left: 0;
             right: 0;
             text-align: center;
-            font-size: 0.8rem;
-            color: var(--gray);
+            font-size: 0.95rem;
+            color: var(--navy);
+            font-weight: 500;
         }
         
         .chart-bar-value {
             position: absolute;
-            top: -25px;
+            top: -35px;
             left: 0;
             right: 0;
             text-align: center;
-            font-weight: 600;
-            color: var(--dark);
+            font-weight: 700;
+            color: var(--navy);
+            font-size: 1.1rem;
+        }
+        
+        .indian-flag {
+            display: inline-block;
+            width: 30px;
+            height: 20px;
+            background: linear-gradient(to bottom, 
+                var(--saffron) 33%, 
+                white 33%, white 66%, 
+                var(--green) 66%);
+            border: 1px solid #ddd;
+            vertical-align: middle;
+            margin-left: 10px;
+            border-radius: 2px;
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .month-selector {
+                justify-content: center;
+            }
+            
+            .chart-container {
+                gap: 15px;
+            }
+            
+            .chart-bar {
+                width: 60px;
+            }
+        }
+        
+        .rupee-symbol {
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+        }
+        
+        .flash-card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .flash-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            border-top: 4px solid var(--saffron);
+            text-align: center;
+        }
+        
+        .flash-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .flash-card-title {
+            font-size: 1rem;
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+        
+        .flash-card-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--navy);
+            transition: all 0.5s ease;
+        }
+        
+        .flash-card-value.changed {
+            animation: flash 1s ease;
+        }
+        
+        .flash-card-description {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-top: 10px;
+        }
+        
+        .flash-card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--saffron);
         }
     </style>
 </head>
 <body>
     <div class="app-container">
         <header>
-            <h1>Monthly Money Tracker</h1>
-            <p class="subtitle">Track your income, expenses, and savings with a clean, modern interface</p>
+            <h1>Monthly Money Tracker <span class="indian-flag"></span></h1>
+            <p class="subtitle">Track your income, expenses, and savings in Indian Rupees</p>
         </header>
         
         <div class="dashboard">
@@ -416,10 +577,10 @@
                     <i class="fas fa-money-bill-wave"></i>
                     <span>Total Income</span>
                 </div>
-                <div class="card-value">$4,850</div>
+                <div class="card-value"><span class="rupee-symbol">₹</span> 86,500</div>
                 <div class="card-change positive">
                     <i class="fas fa-arrow-up"></i>
-                    <span>12% from last month</span>
+                    <span>10% from last month</span>
                 </div>
             </div>
             
@@ -428,10 +589,10 @@
                     <i class="fas fa-shopping-cart"></i>
                     <span>Total Expenses</span>
                 </div>
-                <div class="card-value">$3,210</div>
+                <div class="card-value"><span class="rupee-symbol">₹</span> 54,300</div>
                 <div class="card-change negative">
                     <i class="fas fa-arrow-up"></i>
-                    <span>8% from last month</span>
+                    <span>5% from last month</span>
                 </div>
             </div>
             
@@ -440,11 +601,50 @@
                     <i class="fas fa-piggy-bank"></i>
                     <span>Total Savings</span>
                 </div>
-                <div class="card-value">$1,640</div>
+                <div class="card-value"><span class="rupee-symbol">₹</span> 32,200</div>
                 <div class="card-change positive">
                     <i class="fas fa-arrow-up"></i>
-                    <span>24% from last month</span>
+                    <span>18% from last month</span>
                 </div>
+            </div>
+        </div>
+        
+        <!-- Flash Cards Section -->
+        <div class="flash-card-container">
+            <div class="flash-card">
+                <div class="flash-card-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <div class="flash-card-title">Biggest Expense</div>
+                <div class="flash-card-value"><span class="rupee-symbol">₹</span> 18,000</div>
+                <div class="flash-card-description">House Rent</div>
+            </div>
+            
+            <div class="flash-card">
+                <div class="flash-card-icon">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <div class="flash-card-title">Highest Income</div>
+                <div class="flash-card-value"><span class="rupee-symbol">₹</span> 75,000</div>
+                <div class="flash-card-description">Monthly Salary</div>
+            </div>
+            
+            <div class="flash-card">
+                <div class="flash-card-icon">
+                    <i class="fas fa-percentage"></i>
+                </div>
+                <div class="flash-card-title">Savings Rate</div>
+                <div class="flash-card-value">37.2%</div>
+                <div class="flash-card-description">Of your income</div>
+            </div>
+            
+            <div class="flash-card">
+                <div class="flash-card-icon">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <div class="flash-card-title">Top Category</div>
+                <div class="flash-card-value">Rent</div>
+                <div class="flash-card-description">33.1% of expenses</div>
             </div>
         </div>
         
@@ -461,7 +661,7 @@
             
             <div class="transaction-form">
                 <div class="input-group">
-                    <label for="type">Type</label>
+                    <label for="type"><i class="fas fa-exchange-alt"></i> Type</label>
                     <select id="type">
                         <option value="income">Income</option>
                         <option value="expense">Expense</option>
@@ -469,30 +669,33 @@
                 </div>
                 
                 <div class="input-group">
-                    <label for="category">Category</label>
+                    <label for="category"><i class="fas fa-tag"></i> Category</label>
                     <select id="category">
                         <option value="salary">Salary</option>
                         <option value="freelance">Freelance</option>
                         <option value="investment">Investment</option>
-                        <option value="grocery">Grocery</option>
-                        <option value="shopping">Shopping</option>
+                        <option value="rent">House Rent</option>
+                        <option value="groceries">Groceries</option>
+                        <option value="transport">Transport</option>
+                        <option value="food">Food & Dining</option>
+                        <option value="emi">EMI</option>
                         <option value="utilities">Utilities</option>
                         <option value="entertainment">Entertainment</option>
                     </select>
                 </div>
                 
                 <div class="input-group">
-                    <label for="description">Description</label>
+                    <label for="description"><i class="fas fa-file-alt"></i> Description</label>
                     <input type="text" id="description" placeholder="Transaction details">
                 </div>
                 
                 <div class="input-group">
-                    <label for="amount">Amount ($)</label>
+                    <label for="amount"><i class="fas fa-rupee-sign"></i> Amount (₹)</label>
                     <input type="number" id="amount" placeholder="0.00">
                 </div>
                 
                 <button class="add-btn">
-                    <i class="fas fa-plus"></i> Add
+                    <i class="fas fa-plus-circle"></i> Add Transaction
                 </button>
             </div>
         </div>
@@ -500,18 +703,17 @@
         <div class="transactions-container">
             <h2 class="section-title">
                 <i class="fas fa-exchange-alt"></i>
-                <span>Transactions</span>
+                <span>Recent Transactions</span>
             </h2>
             
             <div class="transaction-list" id="transaction-list">
-                <!-- Transactions will be added here dynamically -->
                 <div class="transaction income">
                     <div class="transaction-info">
                         <div class="transaction-title">Monthly Salary</div>
                         <div class="transaction-date">Jun 5, 2023</div>
                         <div class="transaction-category">Salary</div>
                     </div>
-                    <div class="transaction-amount">+ $3,500.00</div>
+                    <div class="transaction-amount">+ <span class="rupee-symbol">₹</span> 75,000</div>
                 </div>
                 
                 <div class="transaction income">
@@ -520,16 +722,16 @@
                         <div class="transaction-date">Jun 12, 2023</div>
                         <div class="transaction-category">Freelance</div>
                     </div>
-                    <div class="transaction-amount">+ $1,350.00</div>
+                    <div class="transaction-amount">+ <span class="rupee-symbol">₹</span> 11,500</div>
                 </div>
                 
                 <div class="transaction expense">
                     <div class="transaction-info">
-                        <div class="transaction-title">Grocery Shopping</div>
+                        <div class="transaction-title">House Rent</div>
                         <div class="transaction-date">Jun 7, 2023</div>
-                        <div class="transaction-category">Grocery</div>
+                        <div class="transaction-category">Rent</div>
                     </div>
-                    <div class="transaction-amount">- $245.50</div>
+                    <div class="transaction-amount">- <span class="rupee-symbol">₹</span> 18,000</div>
                 </div>
                 
                 <div class="transaction expense">
@@ -538,24 +740,24 @@
                         <div class="transaction-date">Jun 15, 2023</div>
                         <div class="transaction-category">Utilities</div>
                     </div>
-                    <div class="transaction-amount">- $128.75</div>
+                    <div class="transaction-amount">- <span class="rupee-symbol">₹</span> 2,800</div>
                 </div>
                 
                 <div class="transaction expense">
                     <div class="transaction-info">
-                        <div class="transaction-title">New Laptop</div>
+                        <div class="transaction-title">Grocery Shopping</div>
                         <div class="transaction-date">Jun 18, 2023</div>
-                        <div class="transaction-category">Shopping</div>
+                        <div class="transaction-category">Groceries</div>
                     </div>
-                    <div class="transaction-amount">- $1,250.00</div>
+                    <div class="transaction-amount">- <span class="rupee-symbol">₹</span> 7,500</div>
                 </div>
             </div>
         </div>
         
         <div class="transactions-container">
             <h2 class="section-title">
-                <i class="fas fa-chart-bar"></i>
-                <span>Monthly Overview</span>
+                <i class="fas fa-chart-pie"></i>
+                <span>Monthly Financial Overview</span>
             </h2>
             
             <div class="chart-container" id="chart-container">
@@ -564,21 +766,27 @@
         </div>
         
         <footer>
-            <p>Monthly Money Tracker &copy; 2023 | Track your finances with ease</p>
+            <p>Monthly Money Tracker for India &copy; 2023 | Track your finances in Indian Rupees</p>
         </footer>
     </div>
 
     <script>
-        // Sample transaction data
-        const transactions = [
-            { id: 1, type: 'income', category: 'salary', description: 'Monthly Salary', amount: 3500, date: '2023-06-05' },
-            { id: 2, type: 'income', category: 'freelance', description: 'Freelance Project', amount: 1350, date: '2023-06-12' },
-            { id: 3, type: 'expense', category: 'grocery', description: 'Grocery Shopping', amount: 245.5, date: '2023-06-07' },
-            { id: 4, type: 'expense', category: 'utilities', description: 'Electricity Bill', amount: 128.75, date: '2023-06-15' },
-            { id: 5, type: 'expense', category: 'shopping', description: 'New Laptop', amount: 1250, date: '2023-06-18' },
-            { id: 6, type: 'expense', category: 'entertainment', description: 'Concert Tickets', amount: 220, date: '2023-06-20' },
-            { id: 7, type: 'expense', category: 'grocery', description: 'Weekly Groceries', amount: 95.3, date: '2023-06-25' },
-            { id: 8, type: 'income', category: 'investment', description: 'Dividend Payment', amount: 270, date: '2023-06-28' }
+        // Format number in Indian Rupee style
+        function formatRupee(amount) {
+            return '₹ ' + amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        // Sample transaction data with Indian amounts
+        let transactions = [
+            { id: 1, type: 'income', category: 'salary', description: 'Monthly Salary', amount: 75000, date: '2023-06-05' },
+            { id: 2, type: 'income', category: 'freelance', description: 'Freelance Project', amount: 11500, date: '2023-06-12' },
+            { id: 3, type: 'expense', category: 'rent', description: 'House Rent', amount: 18000, date: '2023-06-07' },
+            { id: 4, type: 'expense', category: 'utilities', description: 'Electricity Bill', amount: 2800, date: '2023-06-15' },
+            { id: 5, type: 'expense', category: 'groceries', description: 'Grocery Shopping', amount: 7500, date: '2023-06-18' },
+            { id: 6, type: 'expense', category: 'emi', description: 'Car Loan EMI', amount: 12500, date: '2023-06-20' },
+            { id: 7, type: 'expense', category: 'transport', description: 'Fuel & Transport', amount: 6500, date: '2023-06-25' },
+            { id: 8, type: 'expense', category: 'food', description: 'Dining Out', amount: 4500, date: '2023-06-28' },
+            { id: 9, type: 'income', category: 'investment', description: 'Dividend Payment', amount: 3500, date: '2023-06-28' }
         ];
 
         // Current date and month tracking
@@ -598,6 +806,8 @@
             updateMonthDisplay();
             renderTransactions();
             renderChart();
+            updateSummaryCards();
+            updateFlashCards();
         });
         
         // Month navigation
@@ -610,6 +820,8 @@
             updateMonthDisplay();
             renderTransactions();
             renderChart();
+            updateSummaryCards();
+            updateFlashCards();
         });
         
         nextMonthBtn.addEventListener('click', () => {
@@ -621,6 +833,8 @@
             updateMonthDisplay();
             renderTransactions();
             renderChart();
+            updateSummaryCards();
+            updateFlashCards();
         });
         
         // Update month display
@@ -660,9 +874,9 @@
             
             filteredTransactions.forEach(transaction => {
                 const transactionDate = new Date(transaction.date);
-                const formattedDate = transactionDate.toLocaleDateString('en-US', {
-                    month: 'short',
+                const formattedDate = transactionDate.toLocaleDateString('en-IN', {
                     day: 'numeric',
+                    month: 'short',
                     year: 'numeric'
                 });
                 
@@ -674,7 +888,7 @@
                         <div class="transaction-date">${formattedDate}</div>
                         <div class="transaction-category">${transaction.category.charAt(0).toUpperCase() + transaction.category.slice(1)}</div>
                     </div>
-                    <div class="transaction-amount">${transaction.type === 'income' ? '+ ' : '- '}$${transaction.amount.toFixed(2)}</div>
+                    <div class="transaction-amount">${transaction.type === 'income' ? '+ ' : '- '}${formatRupee(transaction.amount)}</div>
                 `;
                 
                 transactionList.appendChild(transactionEl);
@@ -718,20 +932,14 @@
         function createChartBar(label, value, maxValue, type) {
             const barHeight = value > 0 ? (value / maxValue) * 250 : 10;
             const barEl = document.createElement('div');
-            barEl.classList.add('chart-bar');
-            
-            let barColor = '';
-            if (type === 'income') barColor = 'var(--primary)';
-            else if (type === 'expenses') barColor = 'var(--danger)';
-            else barColor = 'var(--success)';
+            barEl.classList.add('chart-bar', type);
             
             barEl.innerHTML = `
-                <div class="chart-bar-value">$${value.toFixed(2)}</div>
+                <div class="chart-bar-value">${formatRupee(value)}</div>
                 <div class="chart-bar-label">${label}</div>
             `;
             
             barEl.style.height = `${barHeight}px`;
-            barEl.style.background = barColor;
             
             // Add animation
             setTimeout(() => {
@@ -743,15 +951,153 @@
         
         // Update summary cards
         function updateSummaryCards() {
-            // In a real app, this would calculate from actual data
-            // For this demo, we'll just set static values
-            document.querySelector('.income .card-value').textContent = '$4,850';
-            document.querySelector('.expenses .card-value').textContent = '$3,210';
-            document.querySelector('.savings .card-value').textContent = '$1,640';
+            let income = 0;
+            let expense = 0;
+            
+            transactions.forEach(transaction => {
+                const transactionDate = new Date(transaction.date);
+                if (transactionDate.getMonth() === currentMonth && 
+                    transactionDate.getFullYear() === currentYear) {
+                    if (transaction.type === 'income') {
+                        income += transaction.amount;
+                    } else {
+                        expense += transaction.amount;
+                    }
+                }
+            });
+            
+            const savings = income - expense;
+            
+            // Animate card values when they change
+            const incomeEl = document.querySelector('.income .card-value');
+            const expenseEl = document.querySelector('.expenses .card-value');
+            const savingsEl = document.querySelector('.savings .card-value');
+            
+            // Add flash animation
+            incomeEl.classList.add('changed');
+            expenseEl.classList.add('changed');
+            savingsEl.classList.add('changed');
+            
+            // Remove animation class after it completes
+            setTimeout(() => {
+                incomeEl.classList.remove('changed');
+                expenseEl.classList.remove('changed');
+                savingsEl.classList.remove('changed');
+            }, 1000);
+            
+            // Update values
+            incomeEl.innerHTML = `<span class="rupee-symbol">₹</span> ${income.toLocaleString('en-IN')}`;
+            expenseEl.innerHTML = `<span class="rupee-symbol">₹</span> ${expense.toLocaleString('en-IN')}`;
+            savingsEl.innerHTML = `<span class="rupee-symbol">₹</span> ${savings.toLocaleString('en-IN')}`;
         }
         
-        // Initialize summary cards
-        updateSummaryCards();
+        // Update flash cards with financial insights
+        function updateFlashCards() {
+            let income = 0;
+            let expense = 0;
+            let expenseByCategory = {};
+            let incomeByCategory = {};
+            let biggestExpense = { amount: 0, category: '' };
+            let biggestIncome = { amount: 0, category: '' };
+            
+            // Calculate totals and category breakdown
+            transactions.forEach(transaction => {
+                const transactionDate = new Date(transaction.date);
+                if (transactionDate.getMonth() === currentMonth && 
+                    transactionDate.getFullYear() === currentYear) {
+                    
+                    if (transaction.type === 'income') {
+                        income += transaction.amount;
+                        
+                        // Track income by category
+                        if (!incomeByCategory[transaction.category]) {
+                            incomeByCategory[transaction.category] = 0;
+                        }
+                        incomeByCategory[transaction.category] += transaction.amount;
+                        
+                        // Track biggest income
+                        if (transaction.amount > biggestIncome.amount) {
+                            biggestIncome = {
+                                amount: transaction.amount,
+                                category: transaction.category,
+                                description: transaction.description
+                            };
+                        }
+                    } else {
+                        expense += transaction.amount;
+                        
+                        // Track expenses by category
+                        if (!expenseByCategory[transaction.category]) {
+                            expenseByCategory[transaction.category] = 0;
+                        }
+                        expenseByCategory[transaction.category] += transaction.amount;
+                        
+                        // Track biggest expense
+                        if (transaction.amount > biggestExpense.amount) {
+                            biggestExpense = {
+                                amount: transaction.amount,
+                                category: transaction.category,
+                                description: transaction.description
+                            };
+                        }
+                    }
+                }
+            });
+            
+            const savings = income - expense;
+            const savingsRate = income > 0 ? (savings / income * 100).toFixed(1) : 0;
+            
+            // Find top expense category
+            let topCategory = '';
+            let maxExpense = 0;
+            for (const category in expenseByCategory) {
+                if (expenseByCategory[category] > maxExpense) {
+                    maxExpense = expenseByCategory[category];
+                    topCategory = category;
+                }
+            }
+            const topCategoryPercent = expense > 0 ? ((maxExpense / expense) * 100).toFixed(1) : 0;
+            
+            // Update flash cards
+            const biggestExpenseEl = document.querySelector('.flash-card:nth-child(1) .flash-card-value');
+            const biggestIncomeEl = document.querySelector('.flash-card:nth-child(2) .flash-card-value');
+            const savingsRateEl = document.querySelector('.flash-card:nth-child(3) .flash-card-value');
+            const topCategoryEl = document.querySelector('.flash-card:nth-child(4) .flash-card-value');
+            const topCategoryDesc = document.querySelector('.flash-card:nth-child(4) .flash-card-description');
+            
+            // Add flash animation to all flash cards
+            biggestExpenseEl.classList.add('changed');
+            biggestIncomeEl.classList.add('changed');
+            savingsRateEl.classList.add('changed');
+            topCategoryEl.classList.add('changed');
+            
+            // Remove animation class after it completes
+            setTimeout(() => {
+                biggestExpenseEl.classList.remove('changed');
+                biggestIncomeEl.classList.remove('changed');
+                savingsRateEl.classList.remove('changed');
+                topCategoryEl.classList.remove('changed');
+            }, 1000);
+            
+            // Update values
+            biggestExpenseEl.innerHTML = `<span class="rupee-symbol">₹</span> ${biggestExpense.amount.toLocaleString('en-IN')}`;
+            document.querySelector('.flash-card:nth-child(1) .flash-card-description').textContent = 
+                biggestExpense.description || 'No expenses';
+                
+            biggestIncomeEl.innerHTML = `<span class="rupee-symbol">₹</span> ${biggestIncome.amount.toLocaleString('en-IN')}`;
+            document.querySelector('.flash-card:nth-child(2) .flash-card-description').textContent = 
+                biggestIncome.description || 'No income';
+                
+            savingsRateEl.textContent = `${savingsRate}%`;
+            
+            if (topCategory) {
+                topCategoryEl.textContent = topCategory.charAt(0).toUpperCase() + topCategory.slice(1);
+                topCategoryDesc.textContent = `${topCategoryPercent}% of expenses`;
+            } else {
+                topCategoryEl.textContent = 'None';
+                topCategoryDesc.textContent = 'No expenses';
+            }
+        }
         
         // Form submission
         document.querySelector('.add-btn').addEventListener('click', () => {
@@ -765,7 +1111,7 @@
                 return;
             }
             
-            // Create new transaction (in a real app, this would be saved to a database)
+            // Create new transaction
             const today = new Date();
             const newTransaction = {
                 id: transactions.length + 1,
@@ -780,6 +1126,7 @@
             renderTransactions();
             renderChart();
             updateSummaryCards();
+            updateFlashCards();
             
             // Reset form
             document.getElementById('description').value = '';
