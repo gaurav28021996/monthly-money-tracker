@@ -65,7 +65,7 @@
         }
         
         h1 {
-            font-size: 2.8rem;
+            font-size: 2.5rem;
             margin-bottom: 10px;
             font-weight: 700;
             position: relative;
@@ -332,6 +332,7 @@
             background: var(--light-gray);
             transition: var(--transition);
             border-left: 5px solid transparent;
+            position: relative;
         }
         
         .transaction:hover {
@@ -351,6 +352,7 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
+            flex: 1;
         }
         
         .transaction-title {
@@ -366,6 +368,8 @@
         .transaction-amount {
             font-weight: 700;
             font-size: 1.3rem;
+            min-width: 120px;
+            text-align: right;
         }
         
         .income .transaction-amount {
@@ -562,14 +566,113 @@
             margin-bottom: 15px;
             color: var(--saffron);
         }
+        
+        .storage-info {
+            background: white;
+            border-radius: 16px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .storage-badge {
+            background: var(--light-blue);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--navy);
+            font-weight: 500;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            background: var(--light-gray);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .action-btn:hover {
+            background: var(--navy);
+            color: white;
+        }
+        
+        .delete-btn:hover {
+            background: #f44336;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--green);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: translateX(200%);
+            transition: transform 0.5s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.error {
+            background: #f44336;
+        }
     </style>
 </head>
 <body>
     <div class="app-container">
+        <div class="notification" id="notification">
+            <i class="fas fa-check-circle"></i>
+            <span>Data saved successfully!</span>
+        </div>
+        
         <header>
             <h1>Monthly Money Tracker <span class="indian-flag"></span></h1>
-            <p class="subtitle">Track your income, expenses, and savings in Indian Rupees</p>
+            <p class="subtitle">Track your finances in Indian Rupees with local storage</p>
         </header>
+        
+        <div class="storage-info">
+            <div class="storage-badge">
+                <i class="fas fa-database"></i>
+                <span>Data saved locally on your device</span>
+            </div>
+            <div class="action-buttons">
+                <button class="action-btn" id="export-btn">
+                    <i class="fas fa-file-export"></i>
+                    <span>Export Data</span>
+                </button>
+                <button class="action-btn delete-btn" id="clear-btn">
+                    <i class="fas fa-trash-alt"></i>
+                    <span>Clear Data</span>
+                </button>
+            </div>
+        </div>
         
         <div class="dashboard">
             <div class="card income">
@@ -577,11 +680,8 @@
                     <i class="fas fa-money-bill-wave"></i>
                     <span>Total Income</span>
                 </div>
-                <div class="card-value"><span class="rupee-symbol">₹</span> 86,500</div>
-                <div class="card-change positive">
-                    <i class="fas fa-arrow-up"></i>
-                    <span>10% from last month</span>
-                </div>
+                <div class="card-value" id="income-value"><span class="rupee-symbol">₹</span> 0</div>
+                <div class="card-change" id="income-change">-</div>
             </div>
             
             <div class="card expenses">
@@ -589,11 +689,8 @@
                     <i class="fas fa-shopping-cart"></i>
                     <span>Total Expenses</span>
                 </div>
-                <div class="card-value"><span class="rupee-symbol">₹</span> 54,300</div>
-                <div class="card-change negative">
-                    <i class="fas fa-arrow-up"></i>
-                    <span>5% from last month</span>
-                </div>
+                <div class="card-value" id="expense-value"><span class="rupee-symbol">₹</span> 0</div>
+                <div class="card-change" id="expense-change">-</div>
             </div>
             
             <div class="card savings">
@@ -601,23 +698,19 @@
                     <i class="fas fa-piggy-bank"></i>
                     <span>Total Savings</span>
                 </div>
-                <div class="card-value"><span class="rupee-symbol">₹</span> 32,200</div>
-                <div class="card-change positive">
-                    <i class="fas fa-arrow-up"></i>
-                    <span>18% from last month</span>
-                </div>
+                <div class="card-value" id="savings-value"><span class="rupee-symbol">₹</span> 0</div>
+                <div class="card-change" id="savings-change">-</div>
             </div>
         </div>
         
-        <!-- Flash Cards Section -->
         <div class="flash-card-container">
             <div class="flash-card">
                 <div class="flash-card-icon">
                     <i class="fas fa-home"></i>
                 </div>
                 <div class="flash-card-title">Biggest Expense</div>
-                <div class="flash-card-value"><span class="rupee-symbol">₹</span> 18,000</div>
-                <div class="flash-card-description">House Rent</div>
+                <div class="flash-card-value" id="biggest-expense"><span class="rupee-symbol">₹</span> 0</div>
+                <div class="flash-card-description" id="biggest-expense-desc">-</div>
             </div>
             
             <div class="flash-card">
@@ -625,8 +718,8 @@
                     <i class="fas fa-coins"></i>
                 </div>
                 <div class="flash-card-title">Highest Income</div>
-                <div class="flash-card-value"><span class="rupee-symbol">₹</span> 75,000</div>
-                <div class="flash-card-description">Monthly Salary</div>
+                <div class="flash-card-value" id="highest-income"><span class="rupee-symbol">₹</span> 0</div>
+                <div class="flash-card-description" id="highest-income-desc">-</div>
             </div>
             
             <div class="flash-card">
@@ -634,7 +727,7 @@
                     <i class="fas fa-percentage"></i>
                 </div>
                 <div class="flash-card-title">Savings Rate</div>
-                <div class="flash-card-value">37.2%</div>
+                <div class="flash-card-value" id="savings-rate">0%</div>
                 <div class="flash-card-description">Of your income</div>
             </div>
             
@@ -643,8 +736,8 @@
                     <i class="fas fa-tags"></i>
                 </div>
                 <div class="flash-card-title">Top Category</div>
-                <div class="flash-card-value">Rent</div>
-                <div class="flash-card-description">33.1% of expenses</div>
+                <div class="flash-card-value" id="top-category">-</div>
+                <div class="flash-card-description" id="top-category-desc">-</div>
             </div>
         </div>
         
@@ -653,7 +746,7 @@
                 <button class="month-btn" id="prev-month">
                     <i class="fas fa-chevron-left"></i>
                 </button>
-                <div class="current-month">June 2023</div>
+                <div class="current-month" id="current-month">June 2023</div>
                 <button class="month-btn" id="next-month">
                     <i class="fas fa-chevron-right"></i>
                 </button>
@@ -691,10 +784,10 @@
                 
                 <div class="input-group">
                     <label for="amount"><i class="fas fa-rupee-sign"></i> Amount (₹)</label>
-                    <input type="number" id="amount" placeholder="0.00">
+                    <input type="number" id="amount" placeholder="0.00" min="0" step="0.01">
                 </div>
                 
-                <button class="add-btn">
+                <button class="add-btn" id="add-btn">
                     <i class="fas fa-plus-circle"></i> Add Transaction
                 </button>
             </div>
@@ -707,49 +800,9 @@
             </h2>
             
             <div class="transaction-list" id="transaction-list">
-                <div class="transaction income">
-                    <div class="transaction-info">
-                        <div class="transaction-title">Monthly Salary</div>
-                        <div class="transaction-date">Jun 5, 2023</div>
-                        <div class="transaction-category">Salary</div>
-                    </div>
-                    <div class="transaction-amount">+ <span class="rupee-symbol">₹</span> 75,000</div>
-                </div>
-                
-                <div class="transaction income">
-                    <div class="transaction-info">
-                        <div class="transaction-title">Freelance Project</div>
-                        <div class="transaction-date">Jun 12, 2023</div>
-                        <div class="transaction-category">Freelance</div>
-                    </div>
-                    <div class="transaction-amount">+ <span class="rupee-symbol">₹</span> 11,500</div>
-                </div>
-                
-                <div class="transaction expense">
-                    <div class="transaction-info">
-                        <div class="transaction-title">House Rent</div>
-                        <div class="transaction-date">Jun 7, 2023</div>
-                        <div class="transaction-category">Rent</div>
-                    </div>
-                    <div class="transaction-amount">- <span class="rupee-symbol">₹</span> 18,000</div>
-                </div>
-                
-                <div class="transaction expense">
-                    <div class="transaction-info">
-                        <div class="transaction-title">Electricity Bill</div>
-                        <div class="transaction-date">Jun 15, 2023</div>
-                        <div class="transaction-category">Utilities</div>
-                    </div>
-                    <div class="transaction-amount">- <span class="rupee-symbol">₹</span> 2,800</div>
-                </div>
-                
-                <div class="transaction expense">
-                    <div class="transaction-info">
-                        <div class="transaction-title">Grocery Shopping</div>
-                        <div class="transaction-date">Jun 18, 2023</div>
-                        <div class="transaction-category">Groceries</div>
-                    </div>
-                    <div class="transaction-amount">- <span class="rupee-symbol">₹</span> 7,500</div>
+                <div class="empty-state">
+                    <i class="fas fa-receipt"></i>
+                    <p>No transactions recorded for this month</p>
                 </div>
             </div>
         </div>
@@ -761,54 +814,150 @@
             </h2>
             
             <div class="chart-container" id="chart-container">
-                <!-- Chart bars will be added here dynamically -->
+                <div class="empty-state">
+                    <i class="fas fa-chart-bar"></i>
+                    <p>Add transactions to see financial charts</p>
+                </div>
             </div>
         </div>
         
         <footer>
-            <p>Monthly Money Tracker for India &copy; 2023 | Track your finances in Indian Rupees</p>
+            <p>Monthly Money Tracker for India &copy; 2023 | Your data is stored locally on this device</p>
         </footer>
     </div>
 
     <script>
         // Format number in Indian Rupee style
         function formatRupee(amount) {
-            return '₹ ' + amount.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return '₹' + amount.toLocaleString('en-IN', {
+                maximumFractionDigits: 2,
+                minimumFractionDigits: 2
+            });
         }
 
-        // Sample transaction data with Indian amounts
-        let transactions = [
-            { id: 1, type: 'income', category: 'salary', description: 'Monthly Salary', amount: 75000, date: '2023-06-05' },
-            { id: 2, type: 'income', category: 'freelance', description: 'Freelance Project', amount: 11500, date: '2023-06-12' },
-            { id: 3, type: 'expense', category: 'rent', description: 'House Rent', amount: 18000, date: '2023-06-07' },
-            { id: 4, type: 'expense', category: 'utilities', description: 'Electricity Bill', amount: 2800, date: '2023-06-15' },
-            { id: 5, type: 'expense', category: 'groceries', description: 'Grocery Shopping', amount: 7500, date: '2023-06-18' },
-            { id: 6, type: 'expense', category: 'emi', description: 'Car Loan EMI', amount: 12500, date: '2023-06-20' },
-            { id: 7, type: 'expense', category: 'transport', description: 'Fuel & Transport', amount: 6500, date: '2023-06-25' },
-            { id: 8, type: 'expense', category: 'food', description: 'Dining Out', amount: 4500, date: '2023-06-28' },
-            { id: 9, type: 'income', category: 'investment', description: 'Dividend Payment', amount: 3500, date: '2023-06-28' }
-        ];
-
+        // Storage key
+        const STORAGE_KEY = "moneyTrackerData";
+        
         // Current date and month tracking
         let currentDate = new Date();
         let currentMonth = currentDate.getMonth();
         let currentYear = currentDate.getFullYear();
         
+        // Previous month data for comparison
+        let prevMonthData = {
+            income: 0,
+            expense: 0,
+            savings: 0
+        };
+        
         // DOM Elements
-        const currentMonthEl = document.querySelector('.current-month');
+        const currentMonthEl = document.getElementById('current-month');
         const prevMonthBtn = document.getElementById('prev-month');
         const nextMonthBtn = document.getElementById('next-month');
         const transactionList = document.getElementById('transaction-list');
         const chartContainer = document.getElementById('chart-container');
+        const addBtn = document.getElementById('add-btn');
+        const exportBtn = document.getElementById('export-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const notification = document.getElementById('notification');
         
         // Initialize the app
         document.addEventListener('DOMContentLoaded', () => {
+            loadData();
             updateMonthDisplay();
             renderTransactions();
             renderChart();
             updateSummaryCards();
             updateFlashCards();
         });
+        
+        // Load data from localStorage
+        function loadData() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (savedData) {
+                try {
+                    const parsedData = JSON.parse(savedData);
+                    transactions = parsedData.transactions || [];
+                    prevMonthData = parsedData.prevMonthData || prevMonthData;
+                    showNotification('Data loaded successfully!');
+                } catch (e) {
+                    showNotification('Error loading saved data', true);
+                    transactions = [];
+                }
+            } else {
+                transactions = [];
+            }
+        }
+        
+        // Save data to localStorage
+        function saveData() {
+            const dataToSave = {
+                transactions,
+                prevMonthData
+            };
+            
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+            showNotification('Data saved successfully!');
+        }
+        
+        // Export data as JSON file
+        function exportData() {
+            const dataStr = JSON.stringify({
+                transactions,
+                prevMonthData
+            }, null, 2);
+            
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `money-tracker-export-${new Date().toISOString().slice(0,10)}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showNotification('Data exported successfully!');
+        }
+        
+        // Clear all data
+        function clearData() {
+            if (confirm("Are you sure you want to clear all data? This cannot be undone.")) {
+                transactions = [];
+                prevMonthData = {
+                    income: 0,
+                    expense: 0,
+                    savings: 0
+                };
+                localStorage.removeItem(STORAGE_KEY);
+                
+                updateMonthDisplay();
+                renderTransactions();
+                renderChart();
+                updateSummaryCards();
+                updateFlashCards();
+                
+                showNotification('All data cleared successfully!');
+            }
+        }
+        
+        // Show notification
+        function showNotification(message, isError = false) {
+            notification.querySelector('span').textContent = message;
+            notification.classList.remove('error');
+            
+            if (isError) {
+                notification.classList.add('error');
+                notification.querySelector('i').className = 'fas fa-exclamation-circle';
+            } else {
+                notification.querySelector('i').className = 'fas fa-check-circle';
+            }
+            
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
         
         // Month navigation
         prevMonthBtn.addEventListener('click', () => {
@@ -921,6 +1070,17 @@
             
             categories.savings = categories.income - categories.expense;
             
+            // If no data, show empty state
+            if (categories.income === 0 && categories.expense === 0) {
+                chartContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-chart-bar"></i>
+                        <p>Add transactions to see financial charts</p>
+                    </div>
+                `;
+                return;
+            }
+            
             // Create chart bars
             const maxValue = Math.max(categories.income, categories.expense, categories.savings);
             
@@ -968,27 +1128,46 @@
             
             const savings = income - expense;
             
-            // Animate card values when they change
-            const incomeEl = document.querySelector('.income .card-value');
-            const expenseEl = document.querySelector('.expenses .card-value');
-            const savingsEl = document.querySelector('.savings .card-value');
+            // Calculate percentage changes
+            const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+            const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
             
-            // Add flash animation
-            incomeEl.classList.add('changed');
-            expenseEl.classList.add('changed');
-            savingsEl.classList.add('changed');
+            const incomeChange = prevMonthData.income > 0 ? 
+                ((income - prevMonthData.income) / prevMonthData.income * 100).toFixed(1) : 0;
+                
+            const expenseChange = prevMonthData.expense > 0 ? 
+                ((expense - prevMonthData.expense) / prevMonthData.expense * 100).toFixed(1) : 0;
+                
+            const savingsChange = prevMonthData.savings > 0 ? 
+                ((savings - prevMonthData.savings) / prevMonthData.savings * 100).toFixed(1) : 0;
             
-            // Remove animation class after it completes
-            setTimeout(() => {
-                incomeEl.classList.remove('changed');
-                expenseEl.classList.remove('changed');
-                savingsEl.classList.remove('changed');
-            }, 1000);
+            // Update DOM elements
+            document.getElementById('income-value').innerHTML = `<span class="rupee-symbol">₹</span> ${income.toLocaleString('en-IN', {maximumFractionDigits: 0})}`;
+            document.getElementById('expense-value').innerHTML = `<span class="rupee-symbol">₹</span> ${expense.toLocaleString('en-IN', {maximumFractionDigits: 0})}`;
+            document.getElementById('savings-value').innerHTML = `<span class="rupee-symbol">₹</span> ${savings.toLocaleString('en-IN', {maximumFractionDigits: 0})}`;
             
-            // Update values
-            incomeEl.innerHTML = `<span class="rupee-symbol">₹</span> ${income.toLocaleString('en-IN')}`;
-            expenseEl.innerHTML = `<span class="rupee-symbol">₹</span> ${expense.toLocaleString('en-IN')}`;
-            savingsEl.innerHTML = `<span class="rupee-symbol">₹</span> ${savings.toLocaleString('en-IN')}`;
+            // Update change indicators
+            updateChangeIndicator('income-change', incomeChange, income >= prevMonthData.income);
+            updateChangeIndicator('expense-change', expenseChange, expense <= prevMonthData.expense);
+            updateChangeIndicator('savings-change', savingsChange, savings >= prevMonthData.savings);
+        }
+        
+        function updateChangeIndicator(elementId, changeValue, isPositive) {
+            const element = document.getElementById(elementId);
+            
+            if (changeValue == 0) {
+                element.innerHTML = '<i class="fas fa-minus"></i> <span>No change</span>';
+                element.className = 'card-change';
+                return;
+            }
+            
+            if (isPositive) {
+                element.innerHTML = `<i class="fas fa-arrow-up"></i> <span>${Math.abs(changeValue)}% from last month</span>`;
+                element.className = 'card-change positive';
+            } else {
+                element.innerHTML = `<i class="fas fa-arrow-down"></i> <span>${Math.abs(changeValue)}% from last month</span>`;
+                element.className = 'card-change negative';
+            }
         }
         
         // Update flash cards with financial insights
@@ -997,8 +1176,8 @@
             let expense = 0;
             let expenseByCategory = {};
             let incomeByCategory = {};
-            let biggestExpense = { amount: 0, category: '' };
-            let biggestIncome = { amount: 0, category: '' };
+            let biggestExpense = { amount: 0, category: '', description: '' };
+            let biggestIncome = { amount: 0, category: '', description: '' };
             
             // Calculate totals and category breakdown
             transactions.forEach(transaction => {
@@ -1059,70 +1238,54 @@
             const topCategoryPercent = expense > 0 ? ((maxExpense / expense) * 100).toFixed(1) : 0;
             
             // Update flash cards
-            const biggestExpenseEl = document.querySelector('.flash-card:nth-child(1) .flash-card-value');
-            const biggestIncomeEl = document.querySelector('.flash-card:nth-child(2) .flash-card-value');
-            const savingsRateEl = document.querySelector('.flash-card:nth-child(3) .flash-card-value');
-            const topCategoryEl = document.querySelector('.flash-card:nth-child(4) .flash-card-value');
-            const topCategoryDesc = document.querySelector('.flash-card:nth-child(4) .flash-card-description');
-            
-            // Add flash animation to all flash cards
-            biggestExpenseEl.classList.add('changed');
-            biggestIncomeEl.classList.add('changed');
-            savingsRateEl.classList.add('changed');
-            topCategoryEl.classList.add('changed');
-            
-            // Remove animation class after it completes
-            setTimeout(() => {
-                biggestExpenseEl.classList.remove('changed');
-                biggestIncomeEl.classList.remove('changed');
-                savingsRateEl.classList.remove('changed');
-                topCategoryEl.classList.remove('changed');
-            }, 1000);
-            
-            // Update values
-            biggestExpenseEl.innerHTML = `<span class="rupee-symbol">₹</span> ${biggestExpense.amount.toLocaleString('en-IN')}`;
-            document.querySelector('.flash-card:nth-child(1) .flash-card-description').textContent = 
+            document.getElementById('biggest-expense').innerHTML = biggestExpense.amount > 0 ? 
+                formatRupee(biggestExpense.amount) : '<span class="rupee-symbol">₹</span> 0';
+            document.getElementById('biggest-expense-desc').textContent = 
                 biggestExpense.description || 'No expenses';
                 
-            biggestIncomeEl.innerHTML = `<span class="rupee-symbol">₹</span> ${biggestIncome.amount.toLocaleString('en-IN')}`;
-            document.querySelector('.flash-card:nth-child(2) .flash-card-description').textContent = 
+            document.getElementById('highest-income').innerHTML = biggestIncome.amount > 0 ? 
+                formatRupee(biggestIncome.amount) : '<span class="rupee-symbol">₹</span> 0';
+            document.getElementById('highest-income-desc').textContent = 
                 biggestIncome.description || 'No income';
                 
-            savingsRateEl.textContent = `${savingsRate}%`;
+            document.getElementById('savings-rate').textContent = `${savingsRate}%`;
             
             if (topCategory) {
-                topCategoryEl.textContent = topCategory.charAt(0).toUpperCase() + topCategory.slice(1);
-                topCategoryDesc.textContent = `${topCategoryPercent}% of expenses`;
+                document.getElementById('top-category').textContent = 
+                    topCategory.charAt(0).toUpperCase() + topCategory.slice(1);
+                document.getElementById('top-category-desc').textContent = 
+                    `${topCategoryPercent}% of expenses`;
             } else {
-                topCategoryEl.textContent = 'None';
-                topCategoryDesc.textContent = 'No expenses';
+                document.getElementById('top-category').textContent = 'None';
+                document.getElementById('top-category-desc').textContent = 'No expenses';
             }
         }
         
         // Form submission
-        document.querySelector('.add-btn').addEventListener('click', () => {
+        addBtn.addEventListener('click', () => {
             const type = document.getElementById('type').value;
             const category = document.getElementById('category').value;
             const description = document.getElementById('description').value;
             const amount = parseFloat(document.getElementById('amount').value);
             
             if (!description || isNaN(amount) || amount <= 0) {
-                alert('Please enter a valid description and amount');
+                showNotification('Please enter a valid description and amount', true);
                 return;
             }
             
             // Create new transaction
             const today = new Date();
             const newTransaction = {
-                id: transactions.length + 1,
+                id: Date.now(), // Unique ID based on timestamp
                 type,
                 category,
                 description,
                 amount,
-                date: today.toISOString().split('T')[0]
+                date: today.toISOString().split('T')[0] // YYYY-MM-DD format
             };
             
             transactions.push(newTransaction);
+            saveData();
             renderTransactions();
             renderChart();
             updateSummaryCards();
@@ -1131,6 +1294,41 @@
             // Reset form
             document.getElementById('description').value = '';
             document.getElementById('amount').value = '';
+            
+            showNotification('Transaction added successfully!');
+        });
+        
+        // Export button
+        exportBtn.addEventListener('click', exportData);
+        
+        // Clear button
+        clearBtn.addEventListener('click', clearData);
+        
+        // Before the page unloads, save the previous month's data for comparison
+        window.addEventListener('beforeunload', () => {
+            let income = 0;
+            let expense = 0;
+            
+            // Calculate current month data
+            transactions.forEach(transaction => {
+                const transactionDate = new Date(transaction.date);
+                if (transactionDate.getMonth() === currentMonth && 
+                    transactionDate.getFullYear() === currentYear) {
+                    if (transaction.type === 'income') {
+                        income += transaction.amount;
+                    } else {
+                        expense += transaction.amount;
+                    }
+                }
+            });
+            
+            prevMonthData = {
+                income,
+                expense,
+                savings: income - expense
+            };
+            
+            saveData();
         });
     </script>
 </body>
